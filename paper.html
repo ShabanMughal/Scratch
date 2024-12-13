@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scratch/Tear Effect on Hover</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+
+    .scratch-container {
+      position: relative;
+      width: 400px;
+      height: 300px;
+    }
+
+    #coverImage {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #scratchCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scratch-container">
+    <!-- Image underneath that gets revealed -->
+    <img id="coverImage" src="https://c0.wallpaperflare.com/preview/330/275/733/paper-christmas-wrap-wrapping.jpg" alt="Revealed Image">
+    <!-- Canvas for scratch effect -->
+    <canvas id="scratchCanvas"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('scratchCanvas');
+    const ctx = canvas.getContext('2d');
+    const image = new Image();
+    image.src = 'https://via.placeholder.com/400x300?text=Cover+Image';
+
+    // Resize canvas to match the container
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      drawCoverImage();
+    }
+
+    // Draw the cover image on the canvas
+    function drawCoverImage() {
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    }
+
+    // Handle scratching effect
+    let isScratching = false;
+
+    canvas.addEventListener('mousedown', () => isScratching = true);
+    canvas.addEventListener('mouseup', () => isScratching = false);
+    canvas.addEventListener('mouseleave', () => isScratching = false);
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isScratching) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        scratch(x, y);
+      }
+    });
+
+    function scratch(x, y) {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+
+    // Initialize
+    window.addEventListener('load', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
+  </script>
+
+</body>
+</html>
